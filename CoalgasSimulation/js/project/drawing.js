@@ -188,8 +188,8 @@ function showFeeder(){
 		var d=this.rects[i];
 		if(i==2)
 			g.append("polygon")
-			.attr("fill",this.poly_fills[0])
-			.attr("points",this.polygons[0]);
+		.attr("fill",this.poly_fills[0])
+		.attr("points",this.polygons[0]);
 		g.append("rect")
 		.attr("x",d[0])
 		.attr("y",d[1])
@@ -763,10 +763,10 @@ function initText() {
 function showText() {
 	drawFrame(this.pos, this.size, this.rotate%180!=0, this.name);
 	var g=svg.append("g")
-			 .attr("id", this.name)
-			 .attr("class", "movable object")
-			 .attr("transform", "translate("+this.pos[0]+","+this.pos[1]+")scale("+this.scales[0](this.size[0])
-			 	+","+this.scales[1](this.size[1])+")"+"rotate("+this.rotate+","+this.origin[0]/2+","+this.origin[1]/2+")");
+	.attr("id", this.name)
+	.attr("class", "movable object")
+	.attr("transform", "translate("+this.pos[0]+","+this.pos[1]+")scale("+this.scales[0](this.size[0])
+		+","+this.scales[1](this.size[1])+")"+"rotate("+this.rotate+","+this.origin[0]/2+","+this.origin[1]/2+")");
 	if(this.dataID!=""){
 		g.attr("id", "text_" + this.dataID)
 		.classed("data_"+this.dataID,true)
@@ -776,13 +776,40 @@ function showText() {
 		var _dataId = this.dataID;
 		g.on("click", function() {
 			if(!d3.select(this).classed("shown")){
-				d3.select(this).classed("shown",true);
-				Vis.appendL(_dataId);
+				d3.select(this)
+				.classed("shown",true);
+				var _sucess = Vis.appendL(_dataId);
+				d3.select(this).select(".texts")
+				.attr("fill",function(){
+					return _sucess?"#FFCC00":"#BBBBBB"});
 			} else {
-				d3.select(this).classed("shown",false);
+				d3.select(this)
+				.classed("shown",false);
+				d3.select(this).select(".texts")
+				.attr("fill", "#489191");
 				Vis.removeL(_dataId);
 			}
 		});
+	}
+	else{
+		if(this.string.indexOf("-")>=0){
+			g.on("click", function() {
+				var _dataId = d3.select(this).select("text").text(),
+				_dataDisplay = d3.select("#text_"+_dataId);
+				if(!_dataDisplay.classed("shown")){
+					_dataDisplay.classed("shown",true);
+					var _sucess = Vis.appendL(_dataId);
+					_dataDisplay.select(".texts")
+					.attr("fill",function(){
+						return _sucess?"#FFCC00":"#BBBBBB"});
+				} else {
+					_dataDisplay.classed("shown",false);
+					_dataDisplay.select(".texts")
+					.attr("fill","#489191");
+					Vis.removeL(_dataId);
+				}
+			})
+		}
 	}
 	this.draw(g, "text");
 }
@@ -802,16 +829,16 @@ function showConnection() {
 		.attr("id", this.name)
 		.attr("class", "movable object connection")
 		.attr("transform", "translate("+this.pos[0]+","+this.pos[1]+")scale("+this.scales[0](this.size[0])
-		+","+this.scales[1](this.size[1])+")"+"rotate("+this.rotate+","+this.origin[0]/2+","+this.origin[1]/2+")")
-		
-		.on("dblclick", connectEdit); 		
+			+","+this.scales[1](this.size[1])+")"+"rotate("+this.rotate+","+this.origin[0]/2+","+this.origin[1]/2+")")
+
+		.on("dblclick", connectEdit);
 	}
 	else{
 		var g=svg.append("g")
-				 .attr("id", this.name)
-				 .attr("class", "movable object connection")
-				 .attr("transform", "translate("+this.pos[0]+","+this.pos[1]+")scale("+this.scales[0](this.size[0])
-				 +","+this.scales[1](this.size[1])+")"+"rotate("+this.rotate+","+this.origin[0]/2+","+this.origin[1]/2+")");
+		.attr("id", this.name)
+		.attr("class", "movable object connection")
+		.attr("transform", "translate("+this.pos[0]+","+this.pos[1]+")scale("+this.scales[0](this.size[0])
+			+","+this.scales[1](this.size[1])+")"+"rotate("+this.rotate+","+this.origin[0]/2+","+this.origin[1]/2+")");
 		this.draw(g, "path");
 		d3.selectAll($(g[0][0]).find("*"))
 		.attr("stroke",this.color)
@@ -845,7 +872,7 @@ function drawFrame(pos, size, rotate, id){
 	.attr("id","resize"+id)
 	.on("mouseover",function(){$(this).find(".frame").css("opacity","1")})
 	.on("mouseout",function(){
-		if(!d3.select("g#"+$(this).attr("id").replace("resize","")).classed("sel") && !d3.select(this).classed("resized")) 
+		if(!d3.select("g#"+$(this).attr("id").replace("resize","")).classed("sel") && !d3.select(this).classed("resized"))
 			$(this).find(".frame").css("opacity","0");})
 	.on("mousedown",press);
 	var tpos=pos.slice(0), tsize=size.slice(0);
@@ -895,84 +922,94 @@ function drawFrame(pos, size, rotate, id){
 function draw(g, type){
 	switch(type){
 		case "path":
-			for(var i in this.paths){
-				var d=this.paths[i];
-				g.append("path")
-				.attr("d",d)
-				.attr("fill",this.path_fills[i])
-				.attr("class","normal");
-			}
+		for(var i in this.paths){
+			var d=this.paths[i];
+			g.append("path")
+			.attr("d",d)
+			.attr("fill",this.path_fills[i])
+			.attr("class","normal");
+		}
 		break;
 		case "circle":
-			for(var i in this.circles){
-				var d=this.circles[i];
-				g.append("circle")
-				.attr("cx",d[0])
-				.attr("cy",d[1])
-				.attr("r",d[2])
-				.attr("fill",this.circle_fills[i])
-				.classed("normal",true);
-			}
+		for(var i in this.circles){
+			var d=this.circles[i];
+			g.append("circle")
+			.attr("cx",d[0])
+			.attr("cy",d[1])
+			.attr("r",d[2])
+			.attr("fill",this.circle_fills[i])
+			.classed("normal",true);
+		}
 		break;
 		case "rect":
-			for(var i in this.rects){
-				var d=this.rects[i];
-				g.append("rect")
-				.attr("x",d[0])
-				.attr("y",d[1])
-				.attr("width",d[2])
-				.attr("height",d[3])
-				.attr("fill",this.rect_fills[i])
-				.classed("normal",true);
-			}
+		for(var i in this.rects){
+			var d=this.rects[i];
+			g.append("rect")
+			.attr("x",d[0])
+			.attr("y",d[1])
+			.attr("width",d[2])
+			.attr("height",d[3])
+			.attr("fill",this.rect_fills[i])
+			.classed("normal",true);
+		}
 		break;
 		case "polygon":
-			for(var i in this.polygons){
-				var d=this.polygons[i];
-				g.append("polygon")
-				.attr("points",d)
-				.attr("fill",this.poly_fills[i])
-				.classed("normal",true);
-			}
+		for(var i in this.polygons){
+			var d=this.polygons[i];
+			g.append("polygon")
+			.attr("points",d)
+			.attr("fill",this.poly_fills[i])
+			.classed("normal",true);
+		}
 		break;
 		case "line":
-			for(var i in this.lines){
-				var d=this.lines[i];
-				g.append("line")
-				.attr("fill","none")
-				.attr("x1",d[0])
-				.attr("y1",d[1])
-				.attr("x2",d[2])
-				.attr("y2",d[3])
-				.classed("normal",true);
-			}
+		for(var i in this.lines){
+			var d=this.lines[i];
+			g.append("line")
+			.attr("fill","none")
+			.attr("x1",d[0])
+			.attr("y1",d[1])
+			.attr("x2",d[2])
+			.attr("y2",d[3])
+			.classed("normal",true);
+		}
 		break;
 		//AJI changed here
 		case "text":
-			var tx=this.vertical?(this.originTextSize*0.5):0, ty=this.vertical?0:(this.originTextSize*0.86);
-			var text={};
-			if (this.vertical) {
-				text =   g.append("text")
-							   .attr("class","texts")
-							   .attr("fill", this.color)
-			 				   .attr("stroke",this.color)
- 							   .attr("font-size", this.originTextSize)
- 							   .selectAll("tspan")
- 							       .data(this.string.split(""))
- 							   .enter().append("tspan")
- 							   	   .attr("x", 0)
- 							       .attr("dy", "0.95em")
- 							       .text(function(d){return d;});
-			} else {
-				text = g.append("text")
-			 			.text(this.string)
-			 			.attr("fill", this.color)
-			 			.attr("stroke",this.color)
-			 			.attr("x", tx)
-			 			.attr("y", ty)
-			 			.attr("class","texts")
-						.attr("font-size", this.originTextSize);
-			};
+		var tx=this.vertical?(this.originTextSize*0.5):0, ty=this.vertical?0:(this.originTextSize*0.86);
+		var text={}, t_this=this;
+		if (this.vertical) {
+			text = g.append("text")
+			.attr("class","texts")
+			.attr("fill", function(){
+				if(g.classed("dataDisplay"))
+					return "#489191";
+				else
+					return t_this.color;
+			})
+			.attr("stroke",this.color)
+			.attr("font-size", this.originTextSize)
+			.selectAll("tspan")
+			.data(this.string.split(""))
+			.enter().append("tspan")
+			.attr("x", 0)
+			.attr("dy", "0.95em")
+			.text(function(d){return d;});
+		} else {
+			text = g.append("text")
+			.text(this.string)
+			.attr("fill", function(){
+				if(g.classed("dataDisplay"))
+					return "#489191";
+				else
+					return t_this.color;
+			})
+			.attr("stroke",this.color)
+			.attr("x", tx)
+			.attr("y", ty)
+			.attr("class","texts")
+			.attr("font-size", this.originTextSize);
+		};
 		break;
 	}
 }
@@ -981,76 +1018,75 @@ function draw(g, type){
  * draw timeline xAxis and attach events on it
  * @return {none}
  */
-function drawTimeline(){
+ function drawTimeline(){
 
-    Highcharts.setOptions({
-        global: {
-            timezoneOffset: -8 * 60
-        }
-    });
+ 	Highcharts.setOptions({
+ 		global: {
+ 			timezoneOffset: -8 * 60
+ 		}
+ 	});
 
-    var nowDrawing = this.nowDrawing;
+ 	var nowDrawing = this.nowDrawing;
 
-	$('#svg-container').highcharts('StockChart', {
-		navigator: {
-          enabled: false
-		},
-	    scrollbar: {
-	    	enabled: false
-	    },
-	    rangeSelector: {
-	    	buttons : [{
-                type : 'hour',
-                count : 1,
-                text : '1h'
-            }, {
-                type : 'day',
-                count : 1,
-                text : '1D'
-            }, {
-                type : 'month',
-                count : 1,
-                text : '1m'
-            }, {
-                type : 'all',
-                count : 1,
-                text : 'All'
-            }],
-            selected : 0,
-	        inputEnabled: false,
-	        labelStyle: {
-                color: '#ffffff',
-                fontWeight: 'bold'
-            },
-	    },
-    	global: {
-    	  useUTC: false
-    	},
-  		credits: {
-  		    enabled: false
-  		},    	
-	    chart: {
-            backgroundColor: '#489191',
-            height: $('.row').height(),
-            zoomType: 'x'
-        },
-        xAxis: {
-        	type: 'datetime',
-        	minRange: 600e3,
-            labels: {
-                style: {
-                	 "color": "#ffffff"
-                }
-            }  
-
-        },
-		tooltip: {
-            formatter: function (tooltip) {
-                var items = this.points;
+ 	$('#svg-container').highcharts('StockChart', {
+ 		navigator: {
+ 			enabled: false
+ 		},
+ 		scrollbar: {
+ 			enabled: false
+ 		},
+ 		rangeSelector: {
+ 			buttons : [{
+ 				type : 'hour',
+ 				count : 1,
+ 				text : '1h'
+ 			}, {
+ 				type : 'day',
+ 				count : 1,
+ 				text : '1D'
+ 			}, {
+ 				type : 'month',
+ 				count : 1,
+ 				text : '1m'
+ 			}, {
+ 				type : 'all',
+ 				count : 1,
+ 				text : 'All'
+ 			}],
+ 			selected : 0,
+ 			inputEnabled: false,
+ 			labelStyle: {
+ 				color: '#ffffff',
+ 				fontWeight: 'bold'
+ 			},
+ 		},
+ 		global: {
+ 			useUTC: false
+ 		},
+ 		credits: {
+ 			enabled: false
+ 		},
+ 		chart: {
+ 			backgroundColor: '#489191',
+ 			height: $('.row').height(),
+ 			zoomType: 'x'
+ 		},
+ 		xAxis: {
+ 			type: 'datetime',
+ 			minRange: 600e3,
+ 			labels: {
+ 				style: {
+ 					"color": "#ffffff"
+ 				}
+ 			}
+ 		},
+ 		tooltip: {
+ 			formatter: function (tooltip) {
+ 				var items = this.points;
                 // sort the values
                 items.sort(function(a, b){
                 	var ai = nowDrawing.indexOf(a.name), bi = nowDrawing.indexOf(b.name);
-                    return ((ai < bi) ? -1 : ((ai > bi) ? 1 : 0));
+                	return ((ai < bi) ? -1 : ((ai > bi) ? 1 : 0));
                 });
                 items.reverse();
                 return tooltip.defaultFormatter.call(this, tooltip);
@@ -1058,7 +1094,7 @@ function drawTimeline(){
             shared: true
         },
 
-	});
+    });
 
 }
 
@@ -1066,23 +1102,23 @@ function drawTimeline(){
  * move the timeTagLine to position endTime in duration dura
  * @param  {Date} endTime the date of endTime
  * @param  {Num} dura    duration
- * @return {none}         
+ * @return {none}
  */
-function moveTimeTag(Time, dura) {
+ function moveTimeTag(Time, dura) {
 
-}
+ }
 
 /**
  * append a timeline
  * @param  {string} _ID the ID of this timeline's data
- * @return {none}     
+ * @return {none}
  */
-function appendTimeline(_ID) {
-	
-	var padding = this.padding;
+ function appendTimeline(_ID) {
+
+ 	var padding = this.padding;
 
 	if (this.nowDrawing.indexOf(_ID) != -1 || myData.selectByID(_ID) == undefined) // if timeline of _ID already exists
-		return;
+		return false;
 
 	//console.log(_ID);
 	this.nowDrawing.unshift(_ID);
@@ -1096,38 +1132,39 @@ function appendTimeline(_ID) {
 		_areaData[i] = [ (+myData.attrs[i]), _data[timeFormat(myData.attrs[i])] ];
 	}
 
-    chart.addAxis({
-            id: _ID,
-            labels: {
-                align: 'left',
-                x: 3,
-                style: {
-                	 "color": "#ffffff"
-                }
-            },
-            title: {
-                text: _ID,
-                align: 'middle',
-                textAlign: 'right',
-                rotation: 0,
-                style: {
-                	 "color": "#ffffff"
-                }
-            },
-            offset: 0,
-            lineWidth: 2,
-            opposite: false,
-        });
+	chart.addAxis({
+		id: _ID,
+		labels: {
+			align: 'left',
+			x: 3,
+			style: {
+				"color": "#ffffff"
+			}
+		},
+		title: {
+			text: _ID,
+			align: 'middle',
+			textAlign: 'right',
+			rotation: 0,
+			style: {
+				"color": "#ffffff"
+			}
+		},
+		offset: 0,
+		lineWidth: 2,
+		opposite: false,
+	});
 
-    chart.addSeries({
-            type: 'area',
-            name: _ID,
-            data: _areaData,
-            yAxis: _ID
-        });
+	chart.addSeries({
+		type: 'area',
+		name: _ID,
+		data: _areaData,
+		yAxis: _ID
+	});
 
-    this.update();
+	this.update();
 
+	return true;
 }
 
 /**
@@ -1135,79 +1172,79 @@ function appendTimeline(_ID) {
  * @param  {string} _ID
  * @return {none}
  */
-function removeTimeline(_ID) {
-	if (this.nowDrawing.indexOf(_ID) == -1)
-		return;
-	var chart = $('#svg-container').highcharts();
-	chart.get(_ID).remove();
-	d3.select("#text_" + _ID).classed("shown", false);
-	this.nowDrawing.splice(this.nowDrawing.indexOf(_ID), 1);
-	this.update();
+ function removeTimeline(_ID) {
+ 	if (this.nowDrawing.indexOf(_ID) == -1)
+ 		return;
+ 	var chart = $('#svg-container').highcharts();
+ 	chart.get(_ID).remove();
+ 	d3.select("#text_" + _ID).classed("shown", false);
+ 	this.nowDrawing.splice(this.nowDrawing.indexOf(_ID), 1);
+ 	this.update();
 
-}
+ }
 
 
 /**
  * update the Vis chart, according to the number of Vis.nowDrawing's length
  * @return {none}
  */
-function updateVis() {
+ function updateVis() {
 
-	var padding = this.padding;
-	var length = Math.max(this.nowDrawing.length, this.maxDrawingWithoutZoom);
-	var height = ((1 - padding * (length-1) / 100) / length) * 100;
-	var chart = $('#svg-container').highcharts();
-    this.nowDrawing.forEach(function(d, i) {
-    	chart.get(d).update({
-    		top: (i*(padding+height)) + '%',
-    		height: height + '%'
-    	});
-    });	
+ 	var padding = this.padding;
+ 	var length = Math.max(this.nowDrawing.length, this.maxDrawingWithoutZoom);
+ 	var height = ((1 - padding * (length-1) / 100) / length) * 100;
+ 	var chart = $('#svg-container').highcharts();
+ 	this.nowDrawing.forEach(function(d, i) {
+ 		chart.get(d).update({
+ 			top: (i*(padding+height)) + '%',
+ 			height: height + '%'
+ 		});
+ 	});
 
-}
+ }
 
 /**
  * change global time, move the timeTag and change dataDisplays
  * @param  {Date} time global time
  * @param  {Num} dura transition duration
- * @return {none}      
+ * @return {none}
  */
-function showAllAtT(time, dura) {
-	Vis.moveTimeTag(time, dura);
-	myData.data.forEach(function(d, i) {
-		var data = d[timeFormat(time)], selection;
-		d3.select("#text_" + d.ID + " text")
-			.transition()
-			.delay(dura)
-			.duration(0)
-			.text(data);
-		selection = d3.select("#Chart_" + d.ID);
-		if (!selection.empty()) {
-			var datum = selection.datum();
-			selection.select("circle")
-				.transition()
-				.duration(dura)
-				.ease("linear")
-				.attr("cx", datum.scales[0](time))
-				.attr("cy", datum.scales[1](data)*datum.groupScale)
-				.attr("display", null);
-			selection.select(".timelineData")
-					.transition()
-					.delay(dura)
-					.duration(0)
-					.text(data);
-		}
-	});
-}
+ function showAllAtT(time, dura) {
+ 	Vis.moveTimeTag(time, dura);
+ 	myData.data.forEach(function(d, i) {
+ 		var data = d[timeFormat(time)], selection;
+ 		d3.select("#text_" + d.ID + " text")
+ 		.transition()
+ 		.delay(dura)
+ 		.duration(0)
+ 		.text(data);
+ 		selection = d3.select("#Chart_" + d.ID);
+ 		if (!selection.empty()) {
+ 			var datum = selection.datum();
+ 			selection.select("circle")
+ 			.transition()
+ 			.duration(dura)
+ 			.ease("linear")
+ 			.attr("cx", datum.scales[0](time))
+ 			.attr("cy", datum.scales[1](data)*datum.groupScale)
+ 			.attr("display", null);
+ 			selection.select(".timelineData")
+ 			.transition()
+ 			.delay(dura)
+ 			.duration(0)
+ 			.text(data);
+ 		}
+ 	});
+ }
 
 /**
  * show the timeTag and dataDisplays at time after nowTime
  * @param {Num} dura transition duration
- * @return {none} 
+ * @return {none}
  */
-function showNextT() {
-	var nextTime = d3.min(Vis.times.filter(function(d) { return d > Vis.nowTime && d <= Vis.endTime; }));
-	if (nextTime == undefined) {
+ function showNextT() {
+ 	var nextTime = d3.min(Vis.times.filter(function(d) { return d > Vis.nowTime && d <= Vis.endTime; }));
+ 	if (nextTime == undefined) {
 		//console.log("end");
 		Vis.nowTime = Vis.startTime;
 		showAllAtT(Vis.nowTime, 0);
@@ -1217,7 +1254,7 @@ function showNextT() {
 		if (nextTime == Vis.endTime) {
 			clearInterval(nIntervId);
 			d3.select("#playPause")
-				.property("disabled", false);
+			.property("disabled", false);
 		}
 	}
 }
@@ -1226,7 +1263,7 @@ function showNextT() {
  * playAll
  * @return {none}
  */
-function playAll() {
-	showNextT();
-	nIntervId = setInterval(showNextT, 2000/playSpeed);
-}
+ function playAll() {
+ 	showNextT();
+ 	nIntervId = setInterval(showNextT, 2000/playSpeed);
+ }

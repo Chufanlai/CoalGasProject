@@ -1,4 +1,4 @@
-body{	
+body{
    -moz-user-select: none; /*FF*/
    -webkit-user-select: none;  /*webkit*/
    -ms-user-select: none;   /*IE10*/
@@ -31,7 +31,7 @@ path.thick_border{
 	stroke-width: 10;
 	stroke: #000000;
 	stroke-linejoin: round;
-	stroke-miterlimit: 10;	
+	stroke-miterlimit: 10;
 }
 
 path.pipe{
@@ -73,7 +73,7 @@ svg#vis_1 {
 	stroke-width: 8;
 	opacity: 0.3;
 	stroke-linejoin: round;
-	stroke-miterlimit: 10;	
+	stroke-miterlimit: 10;
 }
 
 #vis_1 line.timeline.highlight{
@@ -225,9 +225,9 @@ g.TimelineChart {
 	transform-origin: left top;
 }
 
-g.shown text {
+/*g.shown text {
 	text-decoration: underline;
-}
+}*/
 
 rect.extent {
   stroke: #fff;
@@ -271,3 +271,11 @@ button#playPause {
 	top: 80px;
 }
 
+.highcharts-background {
+	stroke: none;
+}
+
+.svg_divider {
+	stroke: #EEE;
+	stroke-width: 5;
+}

@@ -9,7 +9,7 @@ function readLayout(file){
 				alert("Incorrect data format!");
 				return;
 			}
-		}			
+		}
 		else{
 			if(id==tlength-1 && t.Type=="svg"){
 				Load.scrSize=t.Width.split("_");
@@ -249,10 +249,10 @@ function getData(sample){
 		});
 	}
 	else{
-	    var file = document.getElementById("File").files[0];  
+	    var file = document.getElementById("File").files[0];
 	    var reader = new FileReader();
-	    //Read data as text 
-	    reader.readAsText(file);  
+	    //Read data as text
+	    reader.readAsText(file);
 	    reader.onload=function(f){
 	    	Load.contents=this.result;
 	    	Load.readAll=true;
@@ -261,7 +261,7 @@ function getData(sample){
 	    	}
 	    }
 	}
-} 
+}
 
 function getLength(text){
 	var t=Load.header.match(/,/g);
@@ -290,7 +290,7 @@ function changeGauge(value){
 }
 /*
 function getConnectionPath(){
-	var tx=[this.startPos[0], this.endPos[0]].sort(d3.ascending), 
+	var tx=[this.startPos[0], this.endPos[0]].sort(d3.ascending),
 		ty=[this.startPos[1], this.endPos[1]].sort(d3.ascending);
 	this.pos=[tx[0],ty[0]];
 	this.startPos=[this.startPos[0]-tx[0], this.startPos[1]-ty[0]];
@@ -346,7 +346,7 @@ function fixCSS(restore){
 		$(".normal")
 		.css("stroke-width",1);
 		$(".thick_border")
-		.css("stroke-width",10);		
+		.css("stroke-width",10);
 	}
 }
 
@@ -367,7 +367,7 @@ function fixSize(){
 	zoom_limit=[svg_size[0]/aw*Load.scrSize[0],svg_size[1]/ah*Load.scrSize[1]];
 }
 
-function fixTable(){	
+function fixTable(){
 	$(".dataTables_wrapper .dataTables_filter").css("float","none").css("text-align","center");
 	$("#myTable_info").css("float","none").css("text-align","center");
 	$("#myTable_paginate").css("float","none").css("text-align","center");
@@ -411,10 +411,10 @@ function formatTest(path){
 	return i>0 && i==path.length-4;
 }
 
-function readData(file){ 
+function readData(file){
     var reader = new FileReader();
-    //Read data as text 
-    reader.readAsText(file); 
+    //Read data as text
+    reader.readAsText(file);
     reader.onload=function(f){
     	myData.data=this.result;
     	myData.ready=true;
@@ -474,6 +474,13 @@ function preLoad(){
 				//myData.update();
 				Vis=createVis1(myData.attrs);
 				Vis.draw();
+				d3.select("#svg-container svg")
+				.append("line")
+				.attr("x1",0)
+				.attr("x2",0)
+				.attr("y1",$("#canvas").attr("height")*-10)
+				.attr("y2",$("#canvas").attr("height")*10)
+				.attr("class","svg_divider");
 				d3.selectAll(".dataDisplay").each(function(d){
 					var tt=$(this).children("title").text().replace("data: ","");
 					if (myData.selectByID(tt) == undefined) return;
@@ -500,7 +507,7 @@ function initDataItems(){
 	for(var i in this.data[0]){
 		if(i=="ID" || i=="Name")
 			continue;
-		attrs.push(i);	
+		attrs.push(i);
 	}
 	$.each(this.data,function(id,d){
 		if(!$(".data_"+d.ID)[0])
