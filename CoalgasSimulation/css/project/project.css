@@ -1,0 +1,273 @@
+body{	
+   -moz-user-select: none; /*FF*/
+   -webkit-user-select: none;  /*webkit*/
+   -ms-user-select: none;   /*IE10*/
+   -khtml-user-select: none; /*Earlier*/
+   user-select: none;
+   background: #489191;
+}
+
+th{
+	text-align: center;
+}
+
+td{
+	text-align: center;
+	cursor: pointer;
+}
+
+rect#background{
+	stroke:none;
+}
+
+path.normal{
+	stroke-width: 1;
+	stroke: #000000;
+	stroke-linejoin: round;
+	stroke-miterlimit: 10;
+}
+
+path.thick_border{
+	stroke-width: 10;
+	stroke: #000000;
+	stroke-linejoin: round;
+	stroke-miterlimit: 10;	
+}
+
+path.pipe{
+	fill: none;
+	stroke-linejoin: round;
+	stroke-miterlimit: 10;
+}
+
+path.timeline{
+	fill:none;
+	stroke-width: 3;
+	opacity: 0.3;
+	stroke: #000000;
+	stroke-linejoin: round;
+	stroke-miterlimit: 10;
+}
+
+polygon{
+	stroke-width: 1;
+	stroke: #000000;
+	fill-rule: evenodd;
+	clip-rule: evenodd;
+	stroke-linejoin: round;
+	stroke-miterlimit: 10;
+}
+
+#canvas line{
+	stroke-width: 1;
+	stroke: #000000;
+	stroke-linejoin: round;
+	stroke-miterlimit: 10;
+}
+
+svg#vis_1 {
+	background: #489191;
+}
+
+#vis_1 line.timeline{
+	stroke-width: 8;
+	opacity: 0.3;
+	stroke-linejoin: round;
+	stroke-miterlimit: 10;	
+}
+
+#vis_1 line.timeline.highlight{
+	opacity: 1;
+}
+
+rect{
+	stroke-width: 1;
+	stroke: #000000;
+	stroke-linejoin: round;
+	stroke-miterlimit: 10;
+}
+
+circle{
+	stroke-width: 1;
+	stroke: #000000;
+	stroke-linejoin: round;
+	stroke-miterlimit: 10;
+}
+
+text{
+	stroke: none;
+	font-family: sans-serif;
+	text-align: center;
+}
+
+a{
+	color: #000;
+	text-decoration:none;
+}
+
+a:hover{
+	color: #000;
+	text-decoration:none;
+}
+
+.normal{
+	stroke-width: 1;
+}
+
+.thick_border{
+	stroke-width: 10;
+}
+
+.cyan_border{
+	stroke: #0066FF;
+}
+
+.movable{
+	cursor: default;
+}
+
+.myBtn{
+	cursor: pointer;
+}
+
+.frame{
+	fill: none;
+	stroke: #000;
+	stroke-width: 1;
+	stroke-dasharray: 10,10;
+	opacity: 0;
+}
+
+.selFrame .frame{
+	stroke-width: 2;
+	stroke: red;
+	opacity: 1;
+}
+
+.zoomFrame{
+	fill: none;
+	stroke: #F00;
+	stroke-width: 2;
+	stroke-dasharray: 10,10;
+}
+
+.brushing{
+	fill: none;
+	stroke-dasharray: 10,10;
+	stroke-width: 2;
+	stroke: red;
+}
+
+#canvas{
+	margin-top:1%;
+	margin-bottom: 1%;
+}
+
+#myTable-container{
+	font-size: 12px;
+	padding: 5px;
+	background: #EEE;
+}
+
+.drag{
+	fill: #000;
+	stroke: none;
+}
+
+.selFrame .frame.drag{
+	fill: #F44;
+	stroke: none;
+}
+
+.drag_upleft{
+	cursor: nw-resize;
+}
+
+.drag_upright{
+	cursor: ne-resize;
+}
+
+.drag_bottomleft{
+	cursor: sw-resize;
+}
+
+.drag_bottomright{
+	cursor: se-resize;
+}
+
+.highlight text{
+	fill: #F00;
+}
+
+.Axis path{
+	fill:none;
+	stroke-width: 1;
+	stroke: #000000;
+	stroke-linejoin: round;
+	stroke-miterlimit: 10;
+}
+
+path.Timeline {
+	stroke-width: 2;
+	fill-opacity: 0.25;
+	fill: rgb(255, 204, 102);
+	stroke: rgb(255, 204, 102);
+}
+
+.TimelineChart circle {
+	stroke-width: 1;
+	fill-opacity: 1;
+	fill: rgb(255, 204, 102);
+	stroke: white;
+}
+
+g.TimelineChart {
+	transform-origin: left top;
+}
+
+g.shown text {
+	text-decoration: underline;
+}
+
+rect.extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+
+#timeTagLine line {
+	fill: none;
+	stroke: rgb(192, 192, 192);
+	stroke-width: 2px;
+}
+
+#timeTagLine polyline {
+	fill: rgb(192, 192, 192);
+	stroke: rgb(192, 192, 192);
+	pointer-events: none;
+}
+
+.timelineTitle {
+	cursor: move;
+}
+
+.texts {
+	cursor: pointer;
+}
+
+.highlightTL path{
+	fill: #FFF68F;
+	stroke-width: 2;
+}
+
+.noPointerEvents {
+	pointer-events: none;
+}
+
+button#playPause {
+	position: absolute;
+	background-color: rgba(0,0,0,0);
+	left: 60px;
+	top: 80px;
+}
+

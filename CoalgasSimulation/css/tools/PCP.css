@@ -1,0 +1,29 @@
+path.myPCP_path{
+	fill: none;
+	opacity: 0.2;
+	stroke-width: 2;
+}
+
+path.myPCP_path:hover{
+	fill: none;
+	opacity: 1;
+	stroke-width: 5;
+}
+
+.myPCP_axis path{
+	fill: none;
+	stroke: #000;
+	stroke-width: 2;
+}
+
+circle.myPCP_hdl{
+	fill: #888;
+	stroke: none;
+	cursor: pointer;
+}
+
+circle.myPCP_hdl.myPCP_chosen{
+	fill: #222;
+	stroke: none;
+	cursor: pointer;
+}

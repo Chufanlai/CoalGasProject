@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+	<head>		
+		<meta http-equiv="X-UA-Compatible" content="IE-edge">
+		<meta charset="UTF-8">
+		<title>Coal Gas Production System Layout</title>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.css" media="screen">	
+		<link rel="stylesheet" type="text/css" href="css/project/project.css" media="screen">
+		<link rel="stylesheet" type="text/css" href="css/tools/jquery.cxcolor/jquery.cxcolor.css" media="screen">
+		<link rel="stylesheet" type="text/css" href="css/tools/jquery-ui.css" media="screen">
+		<script type="text/javascript" src="js/jquery/jquery-2.1.1.js"></script>
+		<script type="text/javascript" src="js/jquery/jquery.mousewheel.js"></script>
+		<script type="text/javascript" src="js/jquery/jquery-ui-1.11.1.custom/jquery-ui.js"></script>
+		<script type="text/javascript" src="js/bootstrap/bootstrap.js"></script>
+		<script type="text/javascript" src="js/d3.v3/d3.v3.js"></script>
+		<script type="text/javascript" src="js/tools/svg-crowbar.js"></script>
+		<script type="text/javascript" src="js/tools/contextmenu.js"></script>
+		<script type="text/javascript" src="js/tools/jquery.cxcolor.js"></script>
+	</head>
+	<body>
+	<div class="contextMenu" id="myMenu1">
+      <ul>
+        <li id="addConnection"><span class="glyphicon glyphicon-link"></span> Link To</li>
+        <li id="edit"><span class="glyphicon glyphicon-cog"></span> Edit</li>
+        <li id="rotate"><span class="glyphicon glyphicon-repeat"></span> Rotate</li>
+        <li id="moveToTop"><span class="glyphicon glyphicon-arrow-up"></span> Top</li>
+        <li id="moveToBottom"><span class="glyphicon glyphicon-arrow-down"></span> Bottom</li>
+        <li id="copy"><span class="glyphicon glyphicon-file"></span> Copy</li>
+        <li id="delete"><span class="glyphicon glyphicon-trash"></span> Delete</li>
+      </ul>
+    </div>
+	<div class="container">
+		<h2 class="page-header">Coal Gas Production System Layout  <img src="sources/logo.jpg" height="40px" class="pull-right"></h2> 
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="btn-toolbar" role="toolbar">
+					<div class="btn-group">
+						<div class="btn-group">
+							<div class="dropdown">
+								<button type="button" class="btn btn-default dropdown dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="load_menu">
+									<span class="glyphicon glyphicon-folder-open"></span> Load 
+									<span class="caret"></span>
+									<span class="sr-only">Toggle Dropdown</span>
+								</button>
+								<ul id="menu1" class="dropdown-menu" role="menu" aria-labelledby="load_menu">
+									<li id="sampleData"><a>Sample Layout</a></li>
+									<li data-toggle="modal" data-target="#loadModal"><a>Layout File</a></li>
+								</ul>
+							</div>
+						</div>
+						<div class="btn-group">
+							<div class="dropdown">
+								<button type="button" class="btn btn-default dropdown dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="save_menu">
+									<span class="glyphicon glyphicon-save"></span> Save 
+									<span class="caret"></span>
+									<span class="sr-only">Toggle Dropdown</span>
+								</button>
+								<ul id="menu1" class="dropdown-menu" role="menu" aria-labelledby="save_menu">
+									<li id="saveSvg"><a>Svg File</a></li>
+									<li id="saveData"><a>Layout File</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="btn-group">						
+						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#legend">Legends</button>
+						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#original">Original</button>
+						<button type="button" class="btn btn-default"><a href="http://vis.pku.edu.cn/CoalGas/sources/instruction.pdf" target="_blank">Instruction</a></button>
+					</div>
+					<div class="btn-group">
+						<div class="btn-group">
+							<div class="dropdown">
+								<button type="button" class="btn btn-default dropdown dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="containers">
+									Containers
+									<span class="caret"></span>
+									<span class="sr-only">Toggle Dropdown</span>
+								</button>
+								<ul id="menu1" class="dropdown-menu" role="menu" aria-labelledby="containers">
+									<li class="objectSel" id="bucket" srcsize="sm"><a>bucket <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="separator" srcsize="md"><a>separator <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="feeder" srcsize="lg"><a>feeder <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="tank1" srcsize="sm"><a>tank1 <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="tank2" srcsize="sm"><a>tank2 <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="tank3" srcsize="sm"><a>tank3 <span class="glyphicon"></span></a></li>
+								</ul>
+							</div>
+						</div>
+						<div class="btn-group">
+							<div class="dropdown">
+								<button type="button" class="btn btn-default dropdown dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="valves">
+									Valves
+									<span class="caret"></span>
+									<span class="sr-only">Toggle Dropdown</span>
+								</button>
+								<ul id="menu2" class="dropdown-menu" role="menu" aria-labelledby="valves">
+									<li class="objectSel" id="valve1" srcsize="sm"><a>valve1 <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="valve2" srcsize="sm"><a>valve2 <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="valve3" srcsize="ssm"><a>valve3 <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="valve4" srcsize="sm"><a>valve4 <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="valve5" srcsize="sm"><a>valve5 <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="valve6" srcsize="sm"><a>valve6 <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="valve7" srcsize="sm"><a>valve7 <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="valve8" srcsize="ssm"><a>valve8 <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="valve9" srcsize="sm"><a>valve9 <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="valve10" srcsize="sm"><a>valve10 <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="valve11" srcsize="sm"><a>valve11 <span class="glyphicon"></span></a></li>
+								</ul>
+							</div>
+						</div>
+						<div class="btn-group">
+							<div class="dropdown">
+								<button type="button" class="btn btn-default dropdown dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="others">
+									Others
+									<span class="caret"></span>
+									<span class="sr-only">Toggle Dropdown</span>
+								</button>
+								<ul id="menu3" class="dropdown-menu" role="menu" aria-labelledby="others">
+									<li class="objectSel" id="monitoring" srcsize="ssm"><a>monitoring point <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="diode" srcsize="sm"><a>diode <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="arrow" srcsize="sssm"><a>arrow <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="capacitor" srcsize="sssm"><a>capacitor <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="conveyer" srcsize="lg"><a>conveyer <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="gauge" srcsize="xs"><a>gauge1 <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="gauge2" srcsize="ssm"><a>gauge2 <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="vibrating" srcsize="lg"><a>vibrating feeder <span class="glyphicon"></span></a></li>
+									<li class="objectSel" id="nozzle" srcsize="sm"><a>nozzle <span class="glyphicon"></span></a></li>
+								</ul>
+							</div>
+						</div>
+						<div class="btn-group">
+							<button class="btn btn-default" type="button" id="plus" data-toggle="tooltip" data-placement="top" title="No Object">
+								<span class="glyphicon glyphicon-plus"></span>
+							</button>
+						</div>
+					</div>					
+					<div class="btn-group">
+						<button class="btn btn-default" type="button" id="zoom">
+							<span class="glyphicon glyphicon-zoom-in"></span> Zooming
+						</button>
+						<div class="btn-group">
+							<div class="dropdown">
+								<button type="button" class="btn btn-default dropdown dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="addText">
+									Text
+									<span class="caret"></span>
+									<span class="sr-only">Toggle Dropdown</span>
+								</button>
+								<ul id="menu4" class="dropdown-menu" role="menu" aria-labelledby="valves">
+									<li class="horizontal addText"><a>horizontal <span class="glyphicon"></span></a></li>
+									<li class="vertical addText"><a>vertical <span class="glyphicon"></span></a></li>
+								</ul>
+							</div>
+						</div>
+						<button class="btn btn-default" type="button" id="display">
+							Data
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Modal -->
+		<div class="modal fade bs-example-modal-sm" id="inputText" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-sm">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		        <h4 class="modal-title" id="myModalLabel">Text Input</h4>
+		      </div>
+		      <div class="modal-body">
+		      	<div class="input-group input-group-md">
+		      		<div class="row">
+		      			<div class="col-lg-10 col-md-10 col-sm-10 col-xs-10" style="padding-right:2px">
+							<input type="text" class="form-control" id="inputContent" placeholder="Text Content ...">      				
+		      			</div>
+		      			<div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="padding-left:2px;height:100%">
+		      				<input id="TextColorPicker" class="form-control input_cxcolor">
+						</div>
+		      		</div>
+				</div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal" id="setText">OK</button>
+		        <button type="button" class="btn btn-default" data-dismiss="modal" id="Cansel">Cansel</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		<!-- Modal -->
+		<div class="modal fade bs-example-modal-sm" id="inputData" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-sm">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		        <h4 class="modal-title" id="myModalLabel">Data Binding</h4>
+		      </div>
+		      <div class="modal-body">
+		      	<div class="input-group input-group-md">
+		      		<div class="row">
+		      			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding-right:2px">
+	  						<label> Data ID: </label>
+							<input type="text" class="form-control" id="dataContent" placeholder="Text Content ...">  
+		      			</div>
+		      		</div>
+				</div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal" id="setData">OK</button>
+		        <button type="button" class="btn btn-default" data-dismiss="modal" id="Cansel">Cansel</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		<!-- Modal -->
+		<div class="modal fade bs-example-modal-sm" id="inputConnect" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-sm">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		        <h4 class="modal-title" id="myModalLabel">Connection Edit</h4>
+		      </div>
+		      <div class="modal-body">
+	      		<div class="row" style="height:35px">
+	      			<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="padding-right:2px">
+						<span id="showWidth">Width: 10</span>
+	      			</div>
+	      			<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" style="padding-left:2px;height:100%">
+						<div id="slider"></div>      				
+	      			</div>
+	      		</div>
+	      		<div class="row">
+	      			<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">Color: </div>
+	      			<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+	      				<input id="ConnectColorPicker" class="form-control input_cxcolor">
+					</div>
+	      		</div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal" id="setConnect">OK</button>
+		        <button type="button" class="btn btn-default" data-dismiss="modal" id="Cansel">Cansel</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		<!-- Modal -->
+		<div class="modal fade bs-example-modal-sm" id="loadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-sm">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		        <h4 class="modal-title" id="myModalLabel">Open a local file</h4>
+		      </div>
+		      <div class="modal-body">
+		      <input type="file" id="File"/>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal" id="loadData">OK</button>
+		        <button type="button" class="btn btn-default" data-dismiss="modal" id="Cansel">Cansel</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		<!-- Modal -->
+			<div class="modal fade bs-example-modal-lg" id="legend" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			  	<div class="modal-dialog modal-lg">
+			    	<div class="modal-content" style="text-align:center">
+			      		<div class="modal-header">
+			        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			        		<h3 class="modal-title" id="myModalLabel">Legends</h3>
+			      		</div>
+				      	<div class="modal-body">
+					      	<div class="container" style="width:100%;height:350px">
+					      		<div class="row">
+					      			<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+					      				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+					      					<div class="panel panel-default legend" id="1">
+					      						<div class="panel-heading">
+											      <h4 class="panel-title" style="cursor:pointer">
+											          Containers
+											      </h4>
+										      	</div>
+					      					</div>
+					      					<div class="panel panel-default legend" id="2">
+					      						<div class="panel-heading">
+											      <h4 class="panel-title" style="cursor:pointer">
+											          Valves
+											      </h4>
+										      	</div>
+					      					</div>
+					      					<div class="panel panel-default legend" id="3">
+					      						<div class="panel-heading">
+											      <h4 class="panel-title" style="cursor:pointer">
+											          Others
+											      </h4>
+										      	</div>
+					      					</div>
+					      				</div>
+						      		</div>
+					      			<div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 legendUnit" id="containersLegend" style="display:none">
+						      			<div class="media">
+										  <a class="pull-left" href="#">
+										    <img class="media-object" src="sources/containers.png" width="100%" alt="containers">
+										  </a>
+										</div>
+					      			</div>
+					      			<div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 legendUnit" id="valvesLegend" style="display:none">
+						      			<div class="media">
+										  <a class="pull-left" href="#">
+										    <img class="media-object" src="sources/valves.png" width="100%" alt="valves">
+										  </a>
+										</div>
+					      			</div>
+					      			<div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 legendUnit" id="othersLegend" style="display:none">
+						      			<div class="media">
+										  <a class="pull-left" href="#">
+										    <img class="media-object" src="sources/others.png" width="100%" alt="others">
+										  </a>
+										</div>
+					      			</div>
+					      		</div>
+					      	</div>
+				      	</div>
+			      	</div>
+			    </div>
+			</div>
+		<!-- Modal -->
+		<div class="modal fade bs-example-modal-lg" id="original" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-lg" style="text-align:center">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		        <h3 class="modal-title" id="myModalLabel" width="100%">Original Layout</h3>
+		      </div>
+		      <div class="modal-body">
+		      	<img src="sources/original_layout.bmp" width="100%">
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 svg-container">
+				<svg id="canvas">
+					<g id="Gradients">
+						<linearGradient id="metal0" gradientUnits="userSpaceOnUse" x1="24.6035" y1="65.0845" x2="309.5156" y2="65.0845">
+							<stop  offset="0" style="stop-color:#7D7D7D"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.5" style="stop-color:#DCDDDD"/>
+							<stop  offset="0.578" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7D"/>
+						</linearGradient>
+						<linearGradient id="metal1" gradientUnits="userSpaceOnUse" x1="0" y1="329.4897" x2="335.6289" y2="329.4897">
+							<stop  offset="0" style="stop-color:#7D7D7D"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.5" style="stop-color:#DCDDDD"/>
+							<stop  offset="0.578" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7D"/>
+						</linearGradient>
+						<linearGradient id="metal2" gradientUnits="userSpaceOnUse" x1="92.2534" y1="49.5386" x2="243.375" y2="49.5386">
+							<stop  offset="0" style="stop-color:#7D7D7D"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.5" style="stop-color:#DCDDDD"/>
+							<stop  offset="0.578" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7D"/>
+						</linearGradient>
+						<linearGradient id="metal3" gradientUnits="userSpaceOnUse" x1="138.145" y1="479.0894" x2="473.7754" y2="479.0894" gradientTransform="matrix(1 0 0 -1 54.7349 869.4404)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.5" style="stop-color:#DDDDDD"/>
+							<stop  offset="0.578" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="metal4" gradientUnits="userSpaceOnUse" x1="-48.8232" y1="310.4302" x2="67.8916" y2="310.4302" gradientTransform="matrix(4.489659e-011 -1 1 4.489659e-011 -213.9902 288.2036)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.5" style="stop-color:#DDDDDD"/>
+							<stop  offset="0.578" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="metal5" gradientUnits="userSpaceOnUse" x1="211.0586" y1="778.7866" x2="400.8613" y2="778.7866" gradientTransform="matrix(1 0 0 -1 54.7349 869.4404)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.5" style="stop-color:#DDDDDD"/>
+							<stop  offset="0.578" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="metal6" gradientUnits="userSpaceOnUse" x1="-93.5796" y1="450.2754" x2="-11.4023" y2="450.2754" gradientTransform="matrix(-4.489659e-011 1 -1 -4.489659e-011 503.9443 140.0254)">
+							<stop  offset="0" style="stop-color:#595758"/>
+							<stop  offset="0.08" style="stop-color:#8A8A8A"/>
+							<stop  offset="0.2044" style="stop-color:#B5B5B6"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.5" style="stop-color:#F0EFEF"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B5B5B6"/>
+							<stop  offset="0.92" style="stop-color:#8A8A8A"/>
+							<stop  offset="1" style="stop-color:#595758"/>
+						</linearGradient>
+						<linearGradient id="metal7" gradientUnits="userSpaceOnUse" x1="-104.7988" y1="388.749" x2="-0.1836" y2="388.749" gradientTransform="matrix(-4.489659e-011 1 -1 -4.489659e-011 503.9443 140.0254)">
+							<stop  offset="0" style="stop-color:#595758"/>
+							<stop  offset="0.08" style="stop-color:#8A8A8A"/>
+							<stop  offset="0.2044" style="stop-color:#B5B5B6"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.5" style="stop-color:#F0EFEF"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B5B5B6"/>
+							<stop  offset="0.92" style="stop-color:#8A8A8A"/>
+							<stop  offset="1" style="stop-color:#595758"/>
+						</linearGradient>
+						<linearGradient id="metal8" gradientUnits="userSpaceOnUse" x1="17.6543" y1="46.4478" x2="68.1196" y2="46.4478" gradientTransform="matrix(1 0 0 1 0.0015 -0.002)">
+							<stop  offset="0" style="stop-color:#595758"/>
+							<stop  offset="0.08" style="stop-color:#8A8A8A"/>
+							<stop  offset="0.2044" style="stop-color:#B5B5B6"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.5" style="stop-color:#F0EFEF"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B5B5B6"/>
+							<stop  offset="0.92" style="stop-color:#8A8A8A"/>
+							<stop  offset="1" style="stop-color:#595758"/>
+						</linearGradient>
+						<linearGradient id="metal9" gradientUnits="userSpaceOnUse" x1="17.8276" y1="134.3779" x2="89.5088" y2="134.3779">
+							<stop  offset="0" style="stop-color:#595758"/>
+							<stop  offset="0.08" style="stop-color:#8A8A8A"/>
+							<stop  offset="0.2044" style="stop-color:#B5B5B6"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.5" style="stop-color:#F0EFEF"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B5B5B6"/>
+							<stop  offset="0.92" style="stop-color:#8A8A8A"/>
+							<stop  offset="1" style="stop-color:#595758"/>
+						</linearGradient>
+						<linearGradient id="metal10" gradientUnits="userSpaceOnUse" x1="10.3418" y1="145.3057" x2="96.9961" y2="145.3057">
+							<stop  offset="0" style="stop-color:#595758"/>
+							<stop  offset="0.08" style="stop-color:#8A8A8A"/>
+							<stop  offset="0.2044" style="stop-color:#B5B5B6"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.5" style="stop-color:#F0EFEF"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B5B5B6"/>
+							<stop  offset="0.92" style="stop-color:#8A8A8A"/>
+							<stop  offset="1" style="stop-color:#595758"/>
+						</linearGradient>
+						<linearGradient id="metal11" gradientUnits="userSpaceOnUse" x1="466.3242" y1="548.2725" x2="536.7529" y2="548.2725" gradientTransform="matrix(0 1 -1 0 862.5352 -414.0039)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.5" style="stop-color:#DDDDDE"/>
+							<stop  offset="0.578" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="metal12" gradientUnits="userSpaceOnUse" x1="435.9775" y1="702.8887" x2="567.0996" y2="702.8887" gradientTransform="matrix(0 1 -1 0 862.5352 -414.0039)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.5" style="stop-color:#DDDDDE"/>
+							<stop  offset="0.578" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="metal13" gradientUnits="userSpaceOnUse" x1="486.1582" y1="686.5996" x2="516.918" y2="686.5996" gradientTransform="matrix(0 1 -1 0 862.5352 -414.0039)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.5" style="stop-color:#DDDDDE"/>
+							<stop  offset="0.578" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="metal14" gradientUnits="userSpaceOnUse" x1="430.5811" y1="448.9336" x2="572.4941" y2="448.9336" gradientTransform="matrix(0 1 -1 0 862.5352 -414.0039)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.5" style="stop-color:#DDDDDE"/>
+							<stop  offset="0.578" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="metal15" gradientUnits="userSpaceOnUse" x1="486.1582" y1="414.3516" x2="516.918" y2="414.3516" gradientTransform="matrix(0 1 -1 0 862.5352 -414.0039)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.5" style="stop-color:#DDDDDE"/>
+							<stop  offset="0.578" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="metal16" gradientUnits="userSpaceOnUse" x1="414.0039" y1="401.7373" x2="589.0723" y2="401.7373" gradientTransform="matrix(0 1 -1 0 862.5352 -414.0039)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.5" style="stop-color:#DDDDDE"/>
+							<stop  offset="0.578" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="metal17" gradientUnits="userSpaceOnUse" x1="443.1738" y1="183.3848" x2="478.4229" y2="183.3848">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.5" style="stop-color:#DDDDDE"/>
+							<stop  offset="0.578" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="metal18" gradientUnits="userSpaceOnUse" x1="481.0586" y1="206.4521" x2="495.7256" y2="206.4521" gradientTransform="matrix(4.489659e-011 -1 1 4.489659e-011 -68.04 575.9268)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.5" style="stop-color:#DDDDDE"/>
+							<stop  offset="0.578" style="stop-color:#D8D9D9"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="metal19" gradientUnits="userSpaceOnUse" x1="18.7529" y1="549.7173" x2="66.5576" y2="549.7173" gradientTransform="matrix(0 1 1 0 -521.0054 -16.5781)">
+							<stop  offset="0" style="stop-color:#334553"/>
+							<stop  offset="0.08" style="stop-color:#546D80"/>
+							<stop  offset="0.2044" style="stop-color:#638095"/>
+							<stop  offset="0.3199" style="stop-color:#7FA1BC"/>
+							<stop  offset="0.422" style="stop-color:#91B7D6"/>
+							<stop  offset="0.5" style="stop-color:#9CC5E6"/>
+							<stop  offset="0.578" style="stop-color:#91B7D6"/>
+							<stop  offset="0.6801" style="stop-color:#7FA1BC"/>
+							<stop  offset="0.7956" style="stop-color:#638095"/>
+							<stop  offset="0.92" style="stop-color:#546D80"/>
+							<stop  offset="1" style="stop-color:#334553"/>
+						</linearGradient>
+						<linearGradient id="metal20" gradientUnits="userSpaceOnUse" x1="32.1782" y1="-24.168" x2="78.4829" y2="-24.168" gradientTransform="matrix(0 1 -1 0 96.4839 -29.1782)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E6"/>
+							<stop  offset="0.5" style="stop-color:#EFEFEF"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E6"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="metal21" gradientUnits="userSpaceOnUse" x1="189.6152" y1="6.3882" x2="240.332" y2="6.3882" gradientTransform="matrix(4.489659e-011 -1 1 4.489659e-011 188.8223 241.1265)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E6"/>
+							<stop  offset="0.5" style="stop-color:#F7F8F8"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E6"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="metal22" gradientUnits="userSpaceOnUse" x1="189.6162" y1="-6.2759" x2="240.333" y2="-6.2759" gradientTransform="matrix(4.489659e-011 -1 1 4.489659e-011 188.8223 241.1265)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E6"/>
+							<stop  offset="0.5" style="stop-color:#F7F8F8"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E6"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="metal23" gradientUnits="userSpaceOnUse" x1="55.9004" y1="78.0776" x2="130.5088" y2="78.0776">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E6"/>
+							<stop  offset="0.5" style="stop-color:#F7F8F8"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E6"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="metal24" gradientUnits="userSpaceOnUse" x1="213.0049" y1="55.0986" x2="263.5732" y2="55.0986" gradientTransform="matrix(0 1 -1 0 263.8843 -212.2114)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E6"/>
+							<stop  offset="0.5" style="stop-color:#F7F8F8"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E6"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<radialGradient id="blue1" cx="28.7114" cy="34.1216" r="18.1733" gradientUnits="userSpaceOnUse">
+							<stop  offset="0" style="stop-color:#D3DEF1"/>
+							<stop  offset="0.08" style="stop-color:#CDD7EA"/>
+							<stop  offset="0.2044" style="stop-color:#BDCEE4"/>
+							<stop  offset="0.3199" style="stop-color:#AFC7E0"/>
+							<stop  offset="0.422" style="stop-color:#A3C3DF"/>
+							<stop  offset="0.5" style="stop-color:#9DBCD7"/>
+							<stop  offset="0.578" style="stop-color:#91B7D6"/>
+							<stop  offset="0.6801" style="stop-color:#7FA1BC"/>
+							<stop  offset="0.7956" style="stop-color:#638095"/>
+							<stop  offset="0.92" style="stop-color:#546D80"/>
+							<stop  offset="1" style="stop-color:#334553"/>
+						</radialGradient>
+						<radialGradient id="blue2" cx="28.7119" cy="34.4785" r="10.3398" gradientUnits="userSpaceOnUse">
+							<stop  offset="0" style="stop-color:#D3DEF1"/>
+							<stop  offset="0.08" style="stop-color:#CDD7EA"/>
+							<stop  offset="0.2044" style="stop-color:#BDCEE4"/>
+							<stop  offset="0.3199" style="stop-color:#AFC7E0"/>
+							<stop  offset="0.422" style="stop-color:#A3C3DF"/>
+							<stop  offset="0.5" style="stop-color:#9DBCD7"/>
+							<stop  offset="0.578" style="stop-color:#91B7D6"/>
+							<stop  offset="0.6801" style="stop-color:#7FA1BC"/>
+							<stop  offset="0.7956" style="stop-color:#638095"/>
+							<stop  offset="0.92" style="stop-color:#546D80"/>
+							<stop  offset="1" style="stop-color:#334553"/>
+						</radialGradient>
+						<linearGradient id="_valve1_1" gradientUnits="userSpaceOnUse" x1="-678.498" y1="11.2676" x2="-618.498" y2="11.2676" gradientTransform="matrix(1 0 0 -1 778.5205 41.0605)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.5" style="stop-color:#F7F9FA"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="_valve1_2" gradientUnits="userSpaceOnUse" x1="-9.1533" y1="-4.209" x2="59.706" y2="64.6504" gradientTransform="matrix(0 1 1 0 9.4229 3.9409)">
+							<stop  offset="0" style="stop-color:#FFFFFF"/>
+							<stop  offset="1" style="stop-color:#595757"/>
+						</linearGradient>
+						<linearGradient id="_valve2_1" gradientUnits="userSpaceOnUse" x1="-22.5674" y1="9.2051" x2="73.1199" y2="104.8924" gradientTransform="matrix(0 1 1 0 9.4229 3.9409)">
+							<stop  offset="0" style="stop-color:#FFFFFF"/>
+							<stop  offset="1" style="stop-color:#595757"/>
+						</linearGradient>
+						<linearGradient id="_valve3_1" gradientUnits="userSpaceOnUse" x1="-25.2637" y1="6.6709" x2="34.7368" y2="6.6709" gradientTransform="matrix(4.489659e-011 -1 1 4.489659e-011 22.5454 34.7368)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.5" style="stop-color:#F7F9F9"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="_valve3_2" gradientUnits="userSpaceOnUse" x1="0" y1="120.3809" x2="58.4331" y2="120.3809">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.5" style="stop-color:#F7F9F9"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="_valve4_1" gradientUnits="userSpaceOnUse" x1="90.2258" y1="17.6331" x2="128.7961" y2="17.6331" gradientTransform="matrix(0 1 -1 0 139.3042 -79.7178)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.5" style="stop-color:#F7F9FA"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="_valve5_1" gradientUnits="userSpaceOnUse" x1="73.5742" y1="80.6836" x2="139.7002" y2="80.6836" gradientTransform="matrix(4.489659e-011 -1 1 4.489659e-011 -3.2778 191.7505)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.5" style="stop-color:#F7F9FA"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="_valve5_2" gradientUnits="userSpaceOnUse" x1="32.3926" y1="16.9409" x2="122.418" y2="16.9409">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.5" style="stop-color:#F7F9FA"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="_valve7_1" gradientUnits="userSpaceOnUse" x1="73.5742" y1="86.1738" x2="139.7002" y2="86.1738" gradientTransform="matrix(4.489659e-011 -1 1 4.489659e-011 -8.7681 197.2407)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.5" style="stop-color:#F7F9FA"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="_valve8_1" gradientUnits="userSpaceOnUse" x1="-707.4775" y1="32.7981" x2="-552.665" y2="32.7981" gradientTransform="matrix(4.489659e-011 -1 -1 -4.489659e-011 65.8616 -552.6648)">
+							<stop  offset="0" style="stop-color:#60AB64"/>
+							<stop  offset="0.15" style="stop-color:#A7D398"/>
+							<stop  offset="0.5" style="stop-color:#E5EDD3"/>
+							<stop  offset="0.85" style="stop-color:#A7D398"/>
+							<stop  offset="1" style="stop-color:#60AB64"/>
+						</linearGradient>
+						<linearGradient id="_valve8_2" gradientUnits="userSpaceOnUse" x1="-642.9287" y1="32.7981" x2="-617.2139" y2="32.7981" gradientTransform="matrix(4.489659e-011 -1 -1 -4.489659e-011 65.8616 -552.6648)">
+							<stop  offset="0" style="stop-color:#60AB64"/>
+							<stop  offset="0.15" style="stop-color:#A7D398"/>
+							<stop  offset="0.5" style="stop-color:#E5EDD3"/>
+							<stop  offset="0.85" style="stop-color:#A7D398"/>
+							<stop  offset="1" style="stop-color:#60AB64"/>
+						</linearGradient>
+						<linearGradient id="_valve9_1" gradientUnits="userSpaceOnUse" x1="77.7373" y1="46.9839" x2="101.1758" y2="46.9839">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.5" style="stop-color:#F7F9FA"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="_valve9_2" gradientUnits="userSpaceOnUse" x1="42.2607" y1="20.3965" x2="65.6992" y2="20.3965" gradientTransform="matrix(4.489659e-011 -1 1 4.489659e-011 26.5874 154.3252)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.5" style="stop-color:#F7F9FA"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>
+						<linearGradient id="_valve9_3" gradientUnits="userSpaceOnUse" x1="42.2617" y1="23.2222" x2="65.6992" y2="23.2222" gradientTransform="matrix(0 -1 -1 0 155.1514 154.3252)">
+							<stop  offset="0" style="stop-color:#7D7D7E"/>
+							<stop  offset="0.08" style="stop-color:#969797"/>
+							<stop  offset="0.2044" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.3199" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.422" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.5" style="stop-color:#F7F9FA"/>
+							<stop  offset="0.578" style="stop-color:#E6E6E5"/>
+							<stop  offset="0.6801" style="stop-color:#CCCCCD"/>
+							<stop  offset="0.7956" style="stop-color:#B6B7B7"/>
+							<stop  offset="0.92" style="stop-color:#969797"/>
+							<stop  offset="1" style="stop-color:#7D7D7E"/>
+						</linearGradient>					
+						<linearGradient id="_valve10_1" gradientUnits="userSpaceOnUse" x1="32.5249" y1="2.835" x2="32.5249" y2="18.5073">
+							<stop  offset="0" style="stop-color:#FFFFFF"/>
+							<stop  offset="1" style="stop-color:#727171"/>
+						</linearGradient>
+						<linearGradient id="_valve10_2" gradientUnits="userSpaceOnUse" x1="101.0117" y1="18.5073" x2="101.0117" y2="43.8545">
+							<stop  offset="0" style="stop-color:#FFFFFF"/>
+							<stop  offset="1" style="stop-color:#727171"/>
+						</linearGradient>
+						<linearGradient id="_valve10_3" gradientUnits="userSpaceOnUse" x1="65.0493" y1="58.2773" x2="65.0493" y2="4.085">
+							<stop  offset="0" style="stop-color:#FFFFFF"/>
+							<stop  offset="1" style="stop-color:#727171"/>
+						</linearGradient>
+						<linearGradient id="_arrow_1" gradientUnits="userSpaceOnUse" x1="96.0215" y1="42.4004" x2="-4.882813e-004" y2="42.4004">
+							<stop  offset="0" style="stop-color:#000000"/>
+							<stop  offset="0.1102" style="stop-color:#5A5858;stop-opacity:0.8898"/>
+							<stop  offset="0.239" style="stop-color:#8B8B8C;stop-opacity:0.761"/>
+							<stop  offset="0.3696" style="stop-color:#B3B4B4;stop-opacity:0.6304"/>
+							<stop  offset="0.4992" style="stop-color:#D0D1D2;stop-opacity:0.5008"/>
+							<stop  offset="0.6276" style="stop-color:#E6E7E7;stop-opacity:0.3724"/>
+							<stop  offset="0.7546" style="stop-color:#F5F5F5;stop-opacity:0.2454"/>
+							<stop  offset="0.8795" style="stop-color:#FDFDFD;stop-opacity:0.1205"/>
+							<stop  offset="1" style="stop-color:#FFFFFF;stop-opacity:0"/>
+						</linearGradient>
+						<linearGradient id="nozzle1" gradientUnits="userSpaceOnUse" x1="267.7979" y1="-252.7705" x2="324.2842" y2="-252.7705" gradientTransform="matrix(1 0 0 -1 -236.8804 -42.4736)">
+							<stop  offset="0" style="stop-color:#3E3A39"/>
+							<stop  offset="0.08" style="stop-color:#595757"/>
+							<stop  offset="0.2044" style="stop-color:#898989"/>
+							<stop  offset="0.3199" style="stop-color:#B5B5B6"/>
+							<stop  offset="0.422" style="stop-color:#D3D3D4"/>
+							<stop  offset="0.5" style="stop-color:#DCDDDD"/>
+							<stop  offset="0.578" style="stop-color:#D3D3D4"/>
+							<stop  offset="0.6801" style="stop-color:#B5B5B6"/>
+							<stop  offset="0.7956" style="stop-color:#898989"/>
+							<stop  offset="0.92" style="stop-color:#595757"/>
+							<stop  offset="1" style="stop-color:#3E3A39"/>
+						</linearGradient>
+						<linearGradient id="nozzle2" gradientUnits="userSpaceOnUse" x1="-54.7349" y1="-31.3184" x2="63.5864" y2="-31.3184" gradientTransform="matrix(1 0 0 -1 54.7349 101.3945)">
+							<stop  offset="0" style="stop-color:#3E3A39"/>
+							<stop  offset="0.08" style="stop-color:#595757"/>
+							<stop  offset="0.2044" style="stop-color:#898989"/>
+							<stop  offset="0.3199" style="stop-color:#B5B5B6"/>
+							<stop  offset="0.422" style="stop-color:#D3D3D4"/>
+							<stop  offset="0.5" style="stop-color:#DCDDDD"/>
+							<stop  offset="0.578" style="stop-color:#D3D3D4"/>
+							<stop  offset="0.6801" style="stop-color:#B5B5B6"/>
+							<stop  offset="0.7956" style="stop-color:#898989"/>
+							<stop  offset="0.92" style="stop-color:#595757"/>
+							<stop  offset="1" style="stop-color:#3E3A39"/>
+						</linearGradient>
+						<linearGradient id="nozzle3" gradientUnits="userSpaceOnUse" x1="4.882813e-004" y1="54.666" x2="118.3213" y2="54.666">
+							<stop  offset="0" style="stop-color:#3E3A39"/>
+							<stop  offset="0.08" style="stop-color:#595757"/>
+							<stop  offset="0.2044" style="stop-color:#898989"/>
+							<stop  offset="0.3199" style="stop-color:#B5B5B6"/>
+							<stop  offset="0.422" style="stop-color:#D3D3D4"/>
+							<stop  offset="0.5" style="stop-color:#DCDDDD"/>
+							<stop  offset="0.578" style="stop-color:#D3D3D4"/>
+							<stop  offset="0.6801" style="stop-color:#B5B5B6"/>
+							<stop  offset="0.7956" style="stop-color:#898989"/>
+							<stop  offset="0.92" style="stop-color:#595757"/>
+							<stop  offset="1" style="stop-color:#3E3A39"/>
+						</linearGradient>
+					</g>
+				</svg>
+			</div>
+		</div>
+		<script type="text/javascript" src="js/project/data.js"></script>
+		<script type="text/javascript" src="js/project/objects.js"></script>
+		<script type="text/javascript" src="js/project/drawing.js"></script>
+		<script type="text/javascript" src="js/project/interaction.js"></script>
+		<script type="text/javascript">
+			var svg=d3.select("#canvas")
+			.attr("width","100%")
+			.attr("height",parseInt($(".svg-container").css("width"))/4*2)//parseInt($(".svg-container").css("height"))-180
+			svg.append("rect")
+			.attr("x",0)
+			.attr("y",0)
+			.attr("width","100%")
+			.attr("height","100%")
+			.attr("fill","#489191")
+			.attr("stroke","#000")
+			.attr("id","background");
+    		svg=svg.append("g")
+    		.attr("id","svgContent")
+    		.attr("transform","scale(1,1)translate(0,0)");
+    		svg.append("g")
+			.attr("id","svgHead");
+			var selObj="", selSize="", textTarget="", connectTarget="";
+			var objTypes=["bucket","tank1","tank2","tank3","separator","feeder",
+			"valve1","valve2","valve3","valve4","valve5","valve6","valve7","valve8","valve9","valve10","valve11",
+			"conveyer","gauge","gauge2","vibrating","capacitor","nozzle","arrow","diode","monitoring","text","connection"];//Change here
+			var objects=createObjects(objTypes);
+			var Mouse=createMouse(), Key=createKey(), Load=createLoad(), clipbord=[], init_text="Double click to edit";
+			var pt_r=3, init_size=80, min_wid=3, rand_r=20, svg_size=[parseFloat($("#canvas").css("width")),parseFloat($("#canvas").css("height"))], smpAsp=2492/4759;
+			var textCol, connectCol;
+			var test, testzoom=true;
+		</script>
+	</body>
+</html>
