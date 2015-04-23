@@ -786,7 +786,8 @@ function showText() {
 				d3.select(this)
 				.classed("shown",false);
 				d3.select(this).select(".texts")
-				.attr("fill", "#489191");
+				.attr("fill", "#489191")
+				.text("????");
 				Vis.removeL(_dataId);
 			}
 		});
@@ -805,7 +806,8 @@ function showText() {
 				} else {
 					_dataDisplay.classed("shown",false);
 					_dataDisplay.select(".texts")
-					.attr("fill","#489191");
+					.attr("fill","#489191")
+					.text("????");
 					Vis.removeL(_dataId);
 				}
 			})
@@ -1266,4 +1268,19 @@ function draw(g, type){
  function playAll() {
  	showNextT();
  	nIntervId = setInterval(showNextT, 2000/playSpeed);
+ }
+
+ var temp_textRecord = "";
+ function updateDataDisplay(_text) {
+ 	if(temp_textRecord == ""){
+ 		if(_text.indexOf("-") >=0)
+ 			temp_textRecord = _text.replace(" ","").replace(":","");
+ 		else
+ 			return;
+ 	}
+ 	else{
+ 		d3.selectAll("#text_"+temp_textRecord+" text")
+ 		.text(_text);
+ 		temp_textRecord = "";
+ 	}
  }
