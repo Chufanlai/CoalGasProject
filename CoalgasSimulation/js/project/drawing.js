@@ -769,6 +769,7 @@ function showText() {
 		+","+this.scales[1](this.size[1])+")"+"rotate("+this.rotate+","+this.origin[0]/2+","+this.origin[1]/2+")");
 	if(this.dataID!=""){
 		g.attr("id", "text_" + this.dataID)
+		.attr("opacity", 0)
 		.classed("data_"+this.dataID,true)
 		.classed("dataDisplay",true)
 		.append("title")
@@ -777,6 +778,7 @@ function showText() {
 		g.on("click", function() {
 			if(!d3.select(this).classed("shown")){
 				d3.select(this)
+				.attr("opacity", 1)
 				.classed("shown",true);
 				var _sucess = Vis.appendL(_dataId);
 				d3.select(this).select(".texts")
@@ -784,9 +786,9 @@ function showText() {
 					return _sucess?"#FFCC00":"#BBBBBB"});
 			} else {
 				d3.select(this)
+				.attr("opacity", 0)
 				.classed("shown",false);
 				d3.select(this).select(".texts")
-				.attr("fill", "#489191")
 				.text("????");
 				Vis.removeL(_dataId);
 			}
@@ -798,15 +800,18 @@ function showText() {
 				var _dataId = d3.select(this).select("text").text(),
 				_dataDisplay = d3.select("#text_"+_dataId);
 				if(!_dataDisplay.classed("shown")){
-					_dataDisplay.classed("shown",true);
+					_dataDisplay
+					.attr("opacity", 1)
+					.classed("shown",true);
 					var _sucess = Vis.appendL(_dataId);
 					_dataDisplay.select(".texts")
 					.attr("fill",function(){
 						return _sucess?"#FFCC00":"#BBBBBB"});
 				} else {
-					_dataDisplay.classed("shown",false);
+					_dataDisplay
+					.attr("opacity", 0)
+					.classed("shown",false);
 					_dataDisplay.select(".texts")
-					.attr("fill","#489191")
 					.text("????");
 					Vis.removeL(_dataId);
 				}
